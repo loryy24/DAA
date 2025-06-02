@@ -59,28 +59,50 @@ class _ConnexionState extends State<Connexion> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF4F1F8),
       appBar: AppBar(
-        backgroundColor: Colors.purple,
-        title: Text('Connexion'),
-        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.purple),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Form(
             key: _formKey,
             child: ListView(
               children: [
-                SizedBox(height: 30),
+                SizedBox(height: 20),
                 Center(
-                  child: Icon(Icons.business, size: 100, color: Colors.purple[700]),
+                  child: Image.asset(
+                    'assets/logo.png', width: 150, height: 150
+                  ),
                 ),
                 SizedBox(height: 20),
+                Center(
+                  child: Text(
+                    'Connexion',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF7B1FA2),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
                 TextFormField(
                   controller: emailController,
                   decoration: InputDecoration(
                     labelText: "Email de l'entreprise",
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -95,7 +117,10 @@ class _ConnexionState extends State<Connexion> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Mot de passe",
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Color(0xFFFFFFFF),
                     suffixIcon: IconButton(
                       icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                       onPressed: () {
@@ -120,8 +145,12 @@ class _ConnexionState extends State<Connexion> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple[100],
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    backgroundColor: Color(0xFF8943D5),
+                    foregroundColor: Colors.black87,
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: _isLoading
                       ? CircularProgressIndicator(color: Colors.white)
@@ -133,7 +162,10 @@ class _ConnexionState extends State<Connexion> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/oublier');
                     },
-                    child: Text("Mot de passe oublié ?"),
+                    child: Text(
+                      "Mot de passe oublié ?",
+                      style: TextStyle(color: Colors.purple),
+                    ),
                   ),
                 ),
               ],

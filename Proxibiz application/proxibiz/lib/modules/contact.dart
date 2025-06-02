@@ -66,48 +66,83 @@ class ContactPage extends StatelessWidget {
     final email = entreprise.email ?? "";
 
     return Scaffold(
+      backgroundColor: Color(0xFFF4F1F8),
       appBar: AppBar(
         title: Text("Contact - $nom"),
         backgroundColor: Colors.purple,
+        elevation: 2,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               nom,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.purple[900]),
             ),
-            const SizedBox(height: 10),
-            Text(description),
-            const Divider(height: 30),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: TextStyle(color: Colors.grey[800]),
+            ),
+            const SizedBox(height: 24),
             if (numero.isNotEmpty)
-              Card(
-                child: ListTile(
-                  leading: const Icon(Icons.phone, color: Colors.green),
-                  title: const Text("Appeler / WhatsApp"),
-                  subtitle: Text(numero),
-                  onTap: () => _launchPhone(context, numero),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.chat),
-                    onPressed: () => _launchWhatsApp(context, numero),
-                  ),
-                ),
+              _buildContactCard(
+                context,
+                icon: Icons.phone,
+                iconColor: Colors.green,
+                title: "Appeler",
+                subtitle: numero,
+                onTap: () => _launchPhone(context, numero),
+              ),
+            if (numero.isNotEmpty)
+              _buildContactCard(
+                context,
+                icon: Icons.chat,
+                iconColor: Colors.teal,
+                title: "Envoyer un message WhatsApp",
+                subtitle: numero,
+                onTap: () => _launchWhatsApp(context, numero),
               ),
             if (email.isNotEmpty)
-              Card(
-                child: ListTile(
-                  leading: const Icon(Icons.email, color: Colors.red),
-                  title: const Text("Envoyer un e-mail"),
-                  subtitle: Text(email),
-                  onTap: () => _launchEmail(context, email),
-                ),
+              _buildContactCard(
+                context,
+                icon: Icons.email,
+                iconColor: Colors.redAccent,
+                title: "Envoyer un e-mail",
+                subtitle: email,
+                onTap: () => _launchEmail(context, email),
               ),
             if (numero.isEmpty && email.isEmpty)
-              const Center(child: Text("Aucun contact disponible.")),
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 30),
+                  child: Text("Aucun contact disponible.", style: TextStyle(color: Colors.grey)),
+                ),
+              ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildContactCard(BuildContext context,
+      {required IconData icon,
+        required Color iconColor,
+        required String title,
+        required String subtitle,
+        required VoidCallback onTap}) {
+    return Card(
+      margin: EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(icon, color: iconColor, size: 30),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(subtitle),
+        onTap: onTap,
+        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       ),
     );
   }

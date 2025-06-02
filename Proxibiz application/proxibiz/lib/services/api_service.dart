@@ -7,9 +7,9 @@ import 'package:proxibiz/modules/api_config.dart';
 class ApiService {
   String get baseUrl {
     if (kIsWeb) {
-      return 'http://192.168.167.31:3000'; // ✅ Remplace par l’IP locale de ton PC
+      return 'http://192.168.100.205:3000'; // ✅ Remplace par l’IP locale de ton PC
     } else if (Platform.isAndroid) {
-      return 'http://192.168.167.31:3000'; // ✅ Android Emulator
+      return 'http://192.168.100.205:3000'; // ✅ Android Emulator
     } else {
       return 'http://localhost:3000'; // ✅ iOS, desktop, etc.
     }

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'api_config.dart';
-import 'login.dart'; // Tu avais mis login.dart par erreur ici
+import 'login.dart'; // Assure-toi que ce fichier est bien importé
 
 class Accueil extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class Accueil extends StatefulWidget {
 class _AccueilState extends State<Accueil> {
   List<dynamic> entreprises = [];
   bool isLoading = true;
-  String? errorMessage; // Pour stocker une erreur
+  String? errorMessage;
 
   @override
   void initState() {
@@ -22,9 +22,7 @@ class _AccueilState extends State<Accueil> {
 
   Future<void> fetchEntreprises() async {
     try {
-      final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/entreprises'),
-      );
+      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/entreprises'));
 
       if (response.statusCode == 200) {
         setState(() {
@@ -32,7 +30,7 @@ class _AccueilState extends State<Accueil> {
           isLoading = false;
         });
       } else {
-        throw Exception("Erreur lors de la récupération des données (${response.statusCode})");
+        throw Exception("Erreur (${response.statusCode}) lors de la récupération.");
       }
     } catch (e) {
       setState(() {
@@ -40,7 +38,6 @@ class _AccueilState extends State<Accueil> {
         errorMessage = 'Erreur : ${e.toString()}';
       });
 
-      // Affiche le snackBar seulement après le build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (errorMessage != null && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -51,51 +48,92 @@ class _AccueilState extends State<Accueil> {
     }
   }
 
+  Widget buildEntrepriseCard(Map<String, dynamic> e) {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.business, color: Colors.purple[700], size: 40),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    e['nom'] ?? 'Nom inconnu',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.purple[800]),
+                  ),
+                  SizedBox(height: 6),
+                  Row(children: [
+                    Icon(Icons.email, size: 16, color: Colors.grey[600]),
+                    SizedBox(width: 5),
+                    Expanded(child: Text(e['email'] ?? '-', style: TextStyle(color: Colors.grey[800]))),
+                  ]),
+                  Row(children: [
+                    Icon(Icons.phone, size: 16, color: Colors.grey[600]),
+                    SizedBox(width: 5),
+                    Text(e['numeroWhatsApp'] ?? '-', style: TextStyle(color: Colors.grey[800])),
+                  ]),
+                  SizedBox(height: 6),
+                  Text(
+                    e['description'] ?? '-',
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                  SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(Icons.location_pin, size: 16, color: Colors.grey[600]),
+                      SizedBox(width: 5),
+                      Text(
+                        "(${e['latitude'] ?? '-'}, ${e['longitude'] ?? '-'})",
+                        style: TextStyle(color: Colors.grey[800]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF4F1F8),
       appBar: AppBar(
-        title: Text('Liste des Entreprises'),
-        backgroundColor: Colors.purple,
+        title: Text('Entreprises'),
+        backgroundColor: Color(0xFF7B1FA2),
+        elevation: 2,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () {
-              setState(() {
-                isLoading = true;
-              });
-              fetchEntreprises(); // Recharge les données
+              setState(() => isLoading = true);
+              fetchEntreprises();
             },
           ),
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: Colors.purple))
           : entreprises.isEmpty
-              ? Center(child: Text("Aucune entreprise enregistrée"))
-              : ListView.builder(
-                  itemCount: entreprises.length,
-                  itemBuilder: (context, index) {
-                    final e = entreprises[index];
-                    return Card(
-                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                      elevation: 3,
-                      child: ListTile(
-                        title: Text(e['nom'] ?? 'Nom inconnu'),
-                        subtitle: Text(
-                          'Email : ${e['email'] ?? '-'}\n'
-                          'WhatsApp : ${e['numeroWhatsApp'] ?? '-'}\n'
-                          'Description : ${e['description'] ?? '-'}\n'
-                          'Latitude : ${e['latitude'] ?? '-'}, '
-                          'Longitude : ${e['longitude'] ?? '-'}',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.purple,
-        child: Icon(Icons.add),
+          ? Center(child: Text("Aucune entreprise enregistrée", style: TextStyle(color: Colors.grey[700])))
+          : ListView.builder(
+        itemCount: entreprises.length,
+        itemBuilder: (context, index) => buildEntrepriseCard(entreprises[index]),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Color(0xFF9C27B0),
+        icon: Icon(Icons.add),
+        label: Text("Ajouter"),
         onPressed: () {
           Navigator.push(
             context,

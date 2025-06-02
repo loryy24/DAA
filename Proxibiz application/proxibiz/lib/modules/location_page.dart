@@ -47,7 +47,6 @@ class Entreprise {
   }
 }
 
-// Fonction pour extraire les mots-clés
 List<String> extraireMotsCles(String description) {
   final stopwords = [
     'le', 'la', 'les', 'un', 'une', 'des', 'et', 'ou', 'à', 'de', 'du', 'dans', 'pour',
@@ -186,7 +185,6 @@ class _LocationPageState extends State<LocationPage> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
-                      // Navigue vers une page itinéraire
                       Navigator.pushNamed(
                         context,
                         '/itineraire',
@@ -209,7 +207,7 @@ class _LocationPageState extends State<LocationPage> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      Navigator.pop(context); // Ferme le bottom sheet
+                      Navigator.pop(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -237,34 +235,49 @@ class _LocationPageState extends State<LocationPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Carte des entreprises"),
+        elevation: 2,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.deepPurple),
+        title: const Text(
+          "Carte des entreprises",
+          style: TextStyle(
+            fontSize: 18, // ⬅️ Taille réduite ici
+            color: Colors.deepPurple,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _filterEntreprises,
-              decoration: InputDecoration(
-                hintText: "Rechercher une entreprise...",
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    _filterEntreprises('');
-                  },
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+            child: Material(
+              elevation: 3,
+              borderRadius: BorderRadius.circular(30),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _filterEntreprises,
+                decoration: InputDecoration(
+                  hintText: "Rechercher une entreprise...",
+                  prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear, color: Colors.grey),
+                    onPressed: () {
+                      _searchController.clear();
+                      _filterEntreprises('');
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
@@ -272,49 +285,62 @@ class _LocationPageState extends State<LocationPage> {
         ),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.deepPurple),
-              child: Text(
-                "Menu",
-                style: TextStyle(color: Colors.white, fontSize: 24),
+            Container(
+              height: 120, // ⬅️ Hauteur réduite
+              child: DrawerHeader(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.deepPurple, Colors.deepPurpleAccent],
+                  ),
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.menu, color: Colors.white, size: 28),
+                    SizedBox(width: 10),
+                    Text(
+                      "Menu",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ],
+                ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.add_business),
-              title: const Text("Inscrire mon entreprise"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Inscription()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.business),
-              title: const Text("Voir mon entreprise"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Connexion()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.business),
-              title: const Text("Voir toute les  entreprises "),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Accueil()),
-                );
-              },
+            Expanded(
+              child: ListView(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.business, color: Colors.deepPurple),
+                    title: const Text("Inscrire mon entreprise"),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Inscription()));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.visibility, color: Colors.deepPurple),
+                    title: const Text("Voir mon entreprise"),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Connexion()));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.public, color: Colors.deepPurple),
+                    title: const Text("Voir toutes les entreprises"),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Accueil()));
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
+
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -343,7 +369,13 @@ class _LocationPageState extends State<LocationPage> {
                 point: LatLng(entreprise.latitude, entreprise.longitude),
                 child: GestureDetector(
                   onTap: () => _showEntrepriseDetails(entreprise),
-                  child: const Icon(Icons.business, color: Colors.red, size: 30),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                    ),
+                    child: const Icon(Icons.place_outlined, color: Colors.deepPurple, size: 32),
+                  ),
+
                 ),
               );
             }).toList(),
@@ -352,6 +384,7 @@ class _LocationPageState extends State<LocationPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _getCurrentLocation,
+        backgroundColor: Color(0xFF8A4FCA),
         child: const Icon(Icons.location_searching),
       ),
     );

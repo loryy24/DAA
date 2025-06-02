@@ -19,7 +19,7 @@ class _OublierMotDePasseState extends State<OublierMotDePasse> {
   Future<void> _resetPassword() async {
     setState(() => _isLoading = true);
 
-   final url = Uri.parse('${ApiConfig.baseUrl}/entreprises/resset-passeword');
+    final url = Uri.parse('${ApiConfig.baseUrl}/entreprises/resset-passeword');
 
     final response = await http.put(
       url,
@@ -36,7 +36,7 @@ class _OublierMotDePasseState extends State<OublierMotDePasse> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Mot de passe mis à jour avec succès')),
       );
-      Navigator.pop(context); // retourne à la page précédente
+      Navigator.pop(context); // Retour à la page précédente
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur : ${json.decode(response.body)['message']}')),
@@ -47,31 +47,51 @@ class _OublierMotDePasseState extends State<OublierMotDePasse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[50],
+      backgroundColor: Color(0xFFF4F1F8),
       appBar: AppBar(
-        title: Text("Mot de passe oublié"),
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.purple),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Form(
             key: _formKey,
             child: ListView(
               children: [
-                SizedBox(height: 30),
-                Text(
-                  "Réinitialisation du mot de passe",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                SizedBox(height: 20),
+                Center(
+                  child: Image.asset(
+                    'assets/logo.png',
+                      width: 150, height: 150
+                  ),
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: Text(
+                    "Réinitialisation du mot de passe",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF7B1FA2),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 30),
-
                 TextFormField(
                   controller: emailController,
                   decoration: InputDecoration(
                     labelText: "Adresse mail",
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || !value.contains('@')) {
@@ -81,13 +101,15 @@ class _OublierMotDePasseState extends State<OublierMotDePasse> {
                   },
                 ),
                 SizedBox(height: 15),
-
                 TextFormField(
                   controller: nouveauMdpController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: "Nouveau mot de passe",
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.length < 6) {
@@ -97,13 +119,15 @@ class _OublierMotDePasseState extends State<OublierMotDePasse> {
                   },
                 ),
                 SizedBox(height: 15),
-
                 TextFormField(
                   controller: confirmationMdpController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: "Confirmez le mot de passe",
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock_outline),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value != nouveauMdpController.text) {
@@ -113,18 +137,21 @@ class _OublierMotDePasseState extends State<OublierMotDePasse> {
                   },
                 ),
                 SizedBox(height: 25),
-
                 ElevatedButton(
                   onPressed: _isLoading
                       ? null
                       : () {
-                          if (_formKey.currentState!.validate()) {
-                            _resetPassword();
-                          }
-                        },
+                    if (_formKey.currentState!.validate()) {
+                      _resetPassword();
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    backgroundColor: Color(0xFF8943D5),
+                    foregroundColor: Colors.black87,
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: _isLoading
                       ? CircularProgressIndicator(color: Colors.white)
